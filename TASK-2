@@ -1,0 +1,109 @@
+import java.util.*;
+
+class User {
+    String username;
+    String password;
+    String profile;
+
+    User(String username, String password, String profile) {
+        this.username = username;
+        this.password = password;
+        this.profile = profile;
+    }
+}
+
+public class OnlineExamSystem {
+    static Scanner sc = new Scanner(System.in);
+    static User currentUser = new User("student", "1234", "Default Profile");
+    static boolean isLoggedIn = false;
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\n=== Online Examination System ===");
+            if (!isLoggedIn) {
+                System.out.println("1. Login\n2. Exit");
+                int choice = sc.nextInt();
+                switch (choice) {
+                    case 1 -> login();
+                    case 2 -> {
+                        System.out.println("Exiting...");
+                        return;
+                    }
+                    default -> System.out.println("Invalid choice!");
+                }
+            } else {
+                System.out.println("1. Update Profile & Password");
+                System.out.println("2. Take Exam");
+                System.out.println("3. Logout");
+                int choice = sc.nextInt();
+                switch (choice) {
+                    case 1 -> updateProfile();
+                    case 2 -> startExam();
+                    case 3 -> logout();
+                    default -> System.out.println("Invalid choice!");
+                }
+            }
+        }
+    }
+
+    static void login() {
+        System.out.print("Enter username: ");
+        String uname = sc.next();
+        System.out.print("Enter password: ");
+        String pass = sc.next();
+
+        if (uname.equals(currentUser.username) && pass.equals(currentUser.password)) {
+            isLoggedIn = true;
+            System.out.println("Login successful. Welcome " + uname + "!");
+        } else {
+            System.out.println("Invalid credentials!");
+        }
+    }
+
+    static void updateProfile() {
+        System.out.print("Enter new profile info: ");
+        sc.nextLine(); 
+        String profile = sc.nextLine();
+        System.out.print("Enter new password: ");
+        String newPass = sc.next();
+
+        currentUser.profile = profile;
+        currentUser.password = newPass;
+        System.out.println("Profile and password updated successfully!");
+    }
+
+    static void startExam() {
+        String[] questions = {
+            "Q1: Java is a ___?\n1. Language\n2. OS\n3. Database\n4. None",
+            "Q2: OOP stands for?\n1. Object Oriented Program\n2. Object Oriented Programming\n3. Order of Program\n4. None",
+            "Q3: Which keyword is used for inheritance?\n1. super\n2. this\n3. extends\n4. implements"
+        };
+        int[] answers = {1, 2, 3};
+        int score = 0;
+
+        System.out.println("Exam started. You have 30 seconds.");
+        long startTime = System.currentTimeMillis();
+        long duration = 30 * 1000; // 30 sec timer
+
+        for (int i = 0; i < questions.length; i++) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - startTime >= duration) {
+                System.out.println("\nTime is up! Auto submitting...");
+                break;
+            }
+
+            System.out.println("\n" + questions[i]);
+            System.out.print("Enter your answer: ");
+            int ans = sc.nextInt();
+            if (ans == answers[i]) score++;
+        }
+
+        System.out.println("Exam submitted.");
+        System.out.println("Your Score: " + score + "/" + questions.length);
+    }
+
+    static void logout() {
+        isLoggedIn = false;
+        System.out.println("Logged out successfully!");
+    }
+}
